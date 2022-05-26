@@ -1,0 +1,17 @@
+#2.3.2
+allowed_extention_types: extension, hosted_app, platform_app, theme
+
+#2.4.1
+auth_schemes: ntlm, negotiate
+
+#2.5.1
+blocklist_host: "*"
+
+#2.8.3
+domain_set: adlibdevcloud.com
+
+#2.16
+proxy_mode: auto_detect
+
+#5.3
+disk_cache_size: 250609664

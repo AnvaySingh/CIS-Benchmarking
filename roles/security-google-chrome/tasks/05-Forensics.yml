@@ -1,0 +1,21 @@
+---
+- name: "5.1 (L2) Ensure 'Enable guest mode in browser' is set to 'Disabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: BrowserGuestModeEnabled
+      data: 0
+      type: dword  
+      
+- name: "5.2 (L2) Ensure 'Incognito mode availability 'is set to 'Enabled: Incognito mode disabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: IncognitoModeAvailability
+      data: 1
+      type: dword   
+      
+- name: "5.3 (L1) Ensure 'Set disk cache size, in bytes' is set to 'Enabled: 250609664'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: DiskCacheSize
+      data: "{{ disk_cache_size }}"
+      type: dword  

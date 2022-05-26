@@ -1,0 +1,203 @@
+---
+- name: "2.1.1 (L1) Ensure 'Updatepolicy override' is set to 'Enabled' with 'Always allow updates (recommended)' or 'Automatic silent updates' specified (Automated)"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Update
+      name: Update{8A69D345-D564-463C-AFF1-A69D9E530F96}
+      data: 1
+      type: dword 
+      
+- name: "2.2.1 (L1) Ensure 'Control use of insecure content exceptions' is set to 'Enabled: Do not allow any site to load mixed content'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: DefaultInsecureContentSetting
+      data: 2
+      type: dword       
+      
+- name: "2.2.2 (L2) Ensure 'Control use of the Web Bluetooth API' is set to 'Enabled: Do not allow any site to request access to Bluetooth devices via the Web Bluetooth API'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: DefaultWebBluetoothGuardSetting
+      data: 2
+      type: dword 
+      
+- name: "2.2.3 (L2) Ensure 'Control use of the WebUSB API' is set to 'Enabled: Do not allow any site to request access to USB devices via the WebUSB API' "
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: DefaultWebUsbGuardSetting
+      data: 2
+      type: dword  
+      
+- name: "2.2.4 (L2) Ensure 'Default notification setting' is set to 'Enabled: Do not allow any site to showdesktop notifications' "
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: DefaultNotificationsSetting
+      data: 2
+      type: dword   
+      
+- name: "2.3.1 (L1) Ensure 'Blocks external extensions from being installed' is set to 'Enabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: BlockExternalExtensions
+      data: 1
+      type: dword         
+      
+- name: "2.3.2 (L1) Ensure Configure allowedapp/extension types is set to Enabled extension, hosted_app, platform_app, theme "
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: ExtensionAllowedTypes
+      data: "{{ allowed_extention_types }}"
+      type: string  
+      
+- name: "2.3.3 (L1) Ensure 'Configure extension installation blocklist' is set to 'Enabled *'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: ExtensionInstallBlocklist
+      data: 1
+      type: dword   
+      
+- name: "2.4.1 (L1) Ensure 'Supported authentication schemes' is set to 'Enabled ntlm, negotiate' "
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: AuthSchemes
+      data: "{{ auth_schemes }}"
+      type: string 
+      
+- name: "2.5.1 (L2) Ensure 'Configure native messaging blocklist' is set to 'Enabled *'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: NativeMessagingBlocklist
+      data: "{{ blocklist_host }}"
+      type: string 
+      
+- name: "2.6.1 (L1) Ensure 'Enable saving passwords to the password manager' is Explicitly Configured"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: PasswordManagerEnabled
+      data: 0
+      type: dword    
+      
+- name: "2.7.1 (L1) Ensure 'Enable Google Cloud Print Proxy' is set to 'Disabled' "
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: CloudPrintProxyEnabled
+      data: 0
+      type: dword          
+      
+- name: "2.8.1 Ensure 'Allow remote access connections to this machine' is set to 'Disabled' "
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RemoteAccessHostAllowRemoteAccessConnections
+      data: 0
+      type: dword  
+      
+- name: "2.8.2 (L1) Ensure 'Allow remote users to interact with elevated windows in remote assistance sessions' is set to 'Disabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RemoteAccessHostAllowUiAccessForRemoteAssistance
+      data: 0
+      type: dword  
+      
+- name: "2.8.3 (L1) Ensure Configure the required domain names for remote access clients is set to Enabled with a domain defined"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RemoteAccessHostClientDomainList
+      data: "{{ domain_set }}"
+      type: string  
+      
+- name: "2.8.4 (L1) Ensure 'Enable curtaining of remote access hosts' is set to 'Disabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RemoteAccessHostRequireCurtain
+      data: 0
+      type: dword  
+      
+- name: "2.8.5 (L1) Ensure 'Enable firewall traversal from remote access host' is set to 'Disabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RemoteAccessHostFirewallTraversal
+      data: 0
+      type: dword  
+      
+- name: "2.8.6 (L1) Ensure 'Enable or disable PIN-less authentication for remote access hosts' is set to 'Disabled"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RemoteAccessHostAllowClientPairing
+      data: 0
+      type: dword  
+      
+- name: "2.8.7 (L1) Ensure 'Enable the use of relay servers by the remote access host' is set to 'Disabled"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RemoteAccessHostAllowRelayedConnection
+      data: 0
+      type: dword 
+      
+- name: "2.9 (L1) Ensure 'Allow download restrictions' is set to 'Enabled: Block dangerous downloads'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: DownloadRestrictions
+      data: 1
+      type: dword 
+      
+- name: "2.10 (L2) Ensure 'Allow proceeding from the SSL warning page' is set to 'Disabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: SSLErrorOverrideAllowed
+      data: 0
+      type: dword  
+      
+- name: "2.11 (L1) Ensure 'Disable proceeding from the Safe Browsing warning page' is set to 'Enabled"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: DisableSafeBrowsingProceedAnyway
+      data: 1
+      type: dword  
+      
+- name: "2.12 (L1) Ensure 'Enable Chrome Cleanup on Windows' is Configured"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: ChromeCleanupEnabled
+      data: 0
+      type: dword   
+      
+- name: "2.13 (L1) Ensure 'Enable Site Isolation for every site' is set to 'Enabled' "
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: SitePerProcess
+      data: 1
+      type: dword  
+      
+- name: "2.14 (L2) Ensure 'Force Google SafeSearch' is set to 'Enabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: ForceGoogleSafeSearch
+      data: 1
+      type: dword       
+      
+- name: "2.15 (L1) Ensure 'Notify a user that a browser relaunch or devicerestart is recommended or required' is set to 'Enabled: Show a recurring prompt to the user indication that a relaunch is required' specified"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RelaunchNotification
+      data: 2
+      type: dword    
+      
+- name: "2.16 (L1) Ensure Proxy settings is set to Enabled and does not contain ProxyMode auto_detect"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: ProxyMode
+      data: "{{ proxy_mode }}"
+      type: string   
+      
+- name: "2.17 (L2) Ensure 'Require online OCSP/CRL checks for local trust anchors' is set to 'Enabled'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RequireOnlineRevocationChecksForLocalAnchors
+      data: 1
+      type: dword  
+      
+- name: "2.18 (L1) Ensure 'Set the time period for update notifications' is set to 'Enabled: 86400000'"
+  ansible.windows.win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Google\Chrome
+      name: RelaunchNotificationPeriod
+      data: 86400000
+      type: dword 
