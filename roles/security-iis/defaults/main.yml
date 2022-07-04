@@ -1,0 +1,4 @@
+---
+apppool_name: DefaultAppPool
+number_of_requests: 20
+new_log_location: C:\Install\Logs\LogFiles
