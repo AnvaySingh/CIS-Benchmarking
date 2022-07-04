@@ -1,0 +1,74 @@
+---
+
+- name: 1.2 (L1) Ensure 'host headers' are on all sites (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST'  -filter 'system.applicationHost/sites/site[@name='{{ website_name }}']/bindings/binding[@protocol='http' and @bindingInformation='*:80:']' -name 'bindingInformation' -value '*:80:{{ host_header_value }}'
+
+- name: 1.5 (L1) Ensure 'unique application pools' is set for sites (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-ItemProperty -Path 'IIS:\Sites\{{ website_name }}' -Name applicationPool -Value {{ apppool_name }}
+
+- name: 2.2 (L1) Ensure access to sensitive site features is restricted to authenticated principals only (Not Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location '{{ website_location }}' -filter 'system.webServer/security/authentication/anonymousAuthentication' -name 'enabled' -value 'False'
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location '{{ website_location }}' -filter 'system.webServer/security/authentication/windowsAuthentication' -name 'enabled' -value 'True'
+
+- name: 2.5 (L1) Ensure 'cookie protection mode' is configured  for forms authentication (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST/{{ website_name }}'  -filter 'system.web/authentication/forms' -name 'protection' -value 'All'
+
+- name: 2.6 (L1) Ensure transport layer security for 'basic authentication' is configured (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location '{{ website_name }}' -filter 'system.webServer/security/access' -name 'sslFlags' -value 'Ssl'
+
+- name: 2.7 (L1) Ensure 'passwordFormat'  is notset to clear (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST/{{ website_name }}'  -filter 'system.web/authentication/forms/credentials' -name 'passwordFormat' -value 'SHA1'
+
+- name: 2.8 (L2) Ensure 'credentials' are not stored in configuration files (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Remove-WebConfigurationProperty  -pspath 'MACHINE/WEBROOT/APPHOST/{{ website_name }}'  -filter 'system.web/authentication/forms/credentials' -name '.'      
+
+# tasks file for security-iis-website
+- name: "3.2 - Ensure 'debug' is turned off" # TODO: Raise this up to be default in the software
+  community.windows.win_xml:
+    path: "{{ item }}"
+    xpath: '/configuration/system.web/compilation[@debug]'
+    type: attribute
+    attribute: debug
+    fragment: false
+  loop:
+    - 'C:\Program Files\Adlib\Web\Services\web.config' # TODO: Do we have a variable or registry key that gives us the Adlib install path?
+    - 'C:\Program Files\Adlib\Web\Services\bin\web.config' # TODO: As above
+
+- name: 3.3 (L2) Ensure custom error messages are not off (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST/Default Web Site'  -filter "system.web/customErrors" -name "mode" -value "RemoteOnly"    
+
+- name: 3.4 (L1) Ensure IIS HTTP detailed errors are hidden from displaying remotely (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST/{{ website_name }}'  -filter "system.webServer/httpErrors" -name "errorMode" -value "DetailedLocalOnly"
+
+- name: 3.5 (L2) Ensure ASP.NET stack tracing is not enabled (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST/{{ website_name }}'  -filter "system.web/trace" -name "enabled" -value "False"
+
+- name: 3.6 (L2) Ensure 'httpcookie' mode is configured for session state (Scored)
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST/{{ website_name }}'  -filter "system.web/sessionState" -name "mode" -value "StateServer"
+
+- name: 5.3 (L1) Ensure 'ETW Logging' is enabled
+  ansible.windows.win_powershell:
+    script: |
+      Set-ItemProperty -Path 'IIS:\Sites\{{ website_name }}' -Name logfile.logTargetW3C -Value 'File,ETW'      
