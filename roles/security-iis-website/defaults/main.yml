@@ -3,4 +3,4 @@
 website_name: DefaultWebSite
 apppool_name: DefaultAppPool
 website_location: C:\inetpub\wwwroot
-host_header_value: adlibdevcloud.com
+host_header_value: devcloud.com
